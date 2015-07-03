@@ -13,24 +13,6 @@ import time
 APPNAME = "orange_browser"
 RANDOM_URL = "https://www.random.org/integers/?num=1&min=100&max=999&col=1&base=10&format=plain&rnd=new"
 
-class CherryServer(QObject):
-    foobar_signal = pyqtSignal()
-    shutdown_signal = pyqtSignal()
-
-    def __init__(self):
-        QObject.__init__(self)
-
-    @cherrypy.expose
-    def index(self):
-        self.foobar_signal.emit()
-        return "Hello World"
-
-    @cherrypy.expose
-    def shutdown(self):
-        self.shutdown_signal.emit()
-        return "Hello World"
-
-
 
 class ThreadedServer(QThread):
     foo_signal = pyqtSignal(str)
@@ -41,24 +23,20 @@ class ThreadedServer(QThread):
         self.host = host
         self.port = port
 
-    def stop(self):
-        cherrypy.engine.exit()
-        cherrypy.engine.stop()
-
-    def open_url(self):
-        print("foobar_signal!!!")
+    @cherrypy.expose
+    def index(self):
         self.foo_signal.emit(RANDOM_URL)
+        return "Random number there!"
 
+    @cherrypy.expose
     def shutdown(self):
         self.shutdown_signal.emit()
+        return "Shutdown!"
 
     def run(self):
-        cs = CherryServer()
-        cs.foobar_signal.connect(self.open_url)
-        cs.shutdown_signal.connect(self.shutdown)
         cherrypy.server.socket_host = self.host
         cherrypy.server.socket_port = self.port
-        cherrypy.tree.mount(cs, "/", None)
+        cherrypy.tree.mount(self, "/", None)
         cherrypy.engine.start()
 
 
