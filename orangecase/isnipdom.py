@@ -1,32 +1,40 @@
+#!/usr/bin/python3
+
+from PyQt5.Qt import (Qt,
+                      QObject,
+                      QMainWindow,
+                      QSplitter,
+                      pyqtSignal,
+                      QPushButton,
+                      QApplication)
+
 from IPython.qt.console.rich_ipython_widget import RichIPythonWidget
 from IPython.qt.inprocess import QtInProcessKernelManager
 from IPython.lib import guisupport
 
-from PyQt4 import QtGui, QtCore
 
 import sys
 
 APPNAME = "sniplog"
 
-class Js2Py(QtCore.QObject):
-    sent = QtCore.pyqtSignal(str)
+class Js2Py(QObject):
+    sent = pyqtSignal(str)
 
-    @QtCore.pyqtSlot(str)
     def sendToPython(self, s):
         self.sent.emit(s)
 
-class Snipdom(QtGui.QMainWindow):
+class Snipdom(QMainWindow):
     def __init__(self):
-        QtGui.QMainWindow.__init__(self)
+        QMainWindow.__init__(self)
 
 
-        self.hsplit = QtGui.QSplitter()
+        self.hsplit = QSplitter()
         self.setCentralWidget(self.hsplit)
 
         kernel_manager = QtInProcessKernelManager()
         kernel_manager.start_kernel()
         self.kernel = kernel_manager.kernel
-        self.kernel.gui = 'qt4'
+        self.kernel.gui = 'qt'
 
         self.control = RichIPythonWidget(gui_completion="droplist")
 
@@ -38,13 +46,13 @@ class Snipdom(QtGui.QMainWindow):
         self.control.kernel_manager = kernel_manager
         self.control.kernel_client = kernel_client
 
-        self.vsplit = QtGui.QSplitter()
-        self.vsplit.setOrientation(QtCore.Qt.Vertical)
+        self.vsplit = QSplitter()
+        self.vsplit.setOrientation(Qt.Vertical)
 
         self.vsplit.addWidget(self.control)
         self.hsplit.addWidget(self.vsplit)
 
-        self.sendButton = QtGui.QPushButton("send")
+        self.sendButton = QPushButton("send")
         #self.sendButton.clicked.connect(self.sendcode)
         self.vsplit.addWidget(self.sendButton)
 
@@ -58,7 +66,7 @@ class Snipdom(QtGui.QMainWindow):
 
 if __name__=='__main__':
     if len(sys.argv) == 1:
-        app = QtGui.QApplication(sys.argv)
+        app = QApplication(sys.argv)
         app.setApplicationName(APPNAME)
         main = Snipdom()
         main.show()
