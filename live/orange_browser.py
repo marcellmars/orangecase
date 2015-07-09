@@ -17,6 +17,7 @@ import uuid
 APPNAME = "orange_browser"
 AGENT_URL = "http://www.useragentstring.com/"
 RANDOM_URL = "https://www.random.org/integers/?num=1&min=100&max=999&col=1&base=10&format=plain&rnd=new"
+FACEBOOK_URL = "http://www.facebook.com"
 USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36"
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -36,6 +37,7 @@ class ThreadedServer(QThread):
     foo_signal = pyqtSignal(str)
     shutdown_signal = pyqtSignal()
     screenshot_signal = pyqtSignal(str)
+    login_signal = pyqtSignal(str)
 
     def __init__(self, host='0.0.0.0', port=9919):
         QThread.__init__(self)
@@ -75,12 +77,12 @@ class OrangeBrowser(QtWebKit.QWebView):
         super(OrangeBrowser, self).__init__(parent)
 
         # settings for web page screenshots etc.
-        self.setPage(WebPage())
-        wp = self.page().settings()
-        wp.setAttribute(QWebSettings.AutoLoadImages, True)
-        wp.setAttribute(QWebSettings.JavascriptEnabled, True)
-        self.page().mainFrame().setScrollBarPolicy(Qt.Vertical,
-                                                   Qt.ScrollBarAlwaysOff)
+        #self.setPage(WebPage())
+        #wp = self.page().settings()
+        #wp.setAttribute(QWebSettings.AutoLoadImages, True)
+        #wp.setAttribute(QWebSettings.JavascriptEnabled, True)
+        #self.page().mainFrame().setScrollBarPolicy(Qt.Vertical,
+        #                                           Qt.ScrollBarAlwaysOff)
 
         self.load_status = None
         self.page().mainFrame().loadStarted.connect(self.load_started)
@@ -91,12 +93,12 @@ class OrangeBrowser(QtWebKit.QWebView):
         cherry_server.shutdown_signal.connect(self.shutdown)
         cherry_server.screenshot_signal.connect(self.screenshot)
         cherry_server.start()
-        self.setUrl(QUrl(RANDOM_URL))
+        self.setUrl(QUrl(FACEBOOK_URL))
 
     def load_started(self):
         print("started")
         self.load_status = "started"
-        QTimer.singleShot(10000, self.load_finished)
+        #QTimer.singleShot(10000, self.load_finished)
 
     def load_finished(self, ok=False):
         print("finished")
@@ -108,8 +110,8 @@ class OrangeBrowser(QtWebKit.QWebView):
         self.setUrl(QUrl(url))
 
     def screenshot(self, file_name):
-        while self.load_status == "started":
-            time.sleep(0.15)
+        #while self.load_status == "started":
+        #    time.sleep(0.15)
 
         self.page().setViewportSize(self.page().mainFrame().contentsSize())
         image = QImage(self.page().viewportSize(),
@@ -124,10 +126,12 @@ class OrangeBrowser(QtWebKit.QWebView):
         cherrypy.engine.exit()
         stop()
 
-    def keyPressEvent(self, event):
-        if event.modifiers() & Qt.ControlModifier:
-            if event.key() == Qt.Key_Q:
-                self.close()
+    # def keyPressEvent(self, event):
+    #     if event.modifiers() & Qt.ControlModifier:
+    #         if event.key() == Qt.Key_Q:
+    #             self.close()
+    #     return event
+
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:

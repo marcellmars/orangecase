@@ -1,7 +1,7 @@
 orangecase:
     build: orangecase
     ports:
-      - "9919:9919"
+      - "9929:9919"
     entrypoint: /usr/local/bin/supervisord
     volumes:
         - /home/m/devel/orangecase/live:/tmp/live/
