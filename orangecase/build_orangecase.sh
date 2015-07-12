@@ -1,10 +1,22 @@
 #!/bin/sh
 
-apt-get update
+cd /tmp/
+tar xvfz sip-4.16.8.tar.gz
+cd sip-4.16.8/
+python3 configure.py
+make
+make install
 
-apt-get -y install iproute build-essential xvfb xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic qt5-default python3-pyqt5 python3-pyqt5.qtwebkit python3-pyqt5.qtsvg x11vnc libxtst-dev libpng-dev zlib1g-dev python3-pip git
-pip3 install cherrypy ipython pygments pyzmq
+cd /tmp/
+tar xvfz PyQt-gpl-5.4.2.tar.gz
+cd PyQt-gpl-5.4.2/
+python3 configure.py --qmake=/usr/bin/qmake-qt5 --confirm-license
+make
+make install
+
+cd /tmp/
 git clone git://github.com/msanders/autopy.git
-cd autopy
+cd /tmp/autopy/
 python3 setup.py build
 python3 setup.py install
+

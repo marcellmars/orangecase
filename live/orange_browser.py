@@ -1,10 +1,8 @@
-from PyQt5.Qt import (Qt,
-                      QApplication,
+from PyQt5.Qt import (QApplication,
                       QThread,
                       QUrl,
                       QImage,
                       QPainter,
-                      QTimer,
                       QWebSettings,
                       pyqtSignal)
 from PyQt5 import QtWebKitWidgets as QtWebKit
@@ -77,10 +75,10 @@ class OrangeBrowser(QtWebKit.QWebView):
         super(OrangeBrowser, self).__init__(parent)
 
         # settings for web page screenshots etc.
-        #self.setPage(WebPage())
-        #wp = self.page().settings()
-        #wp.setAttribute(QWebSettings.AutoLoadImages, True)
-        #wp.setAttribute(QWebSettings.JavascriptEnabled, True)
+        self.setPage(WebPage())
+        wp = self.page().settings()
+        wp.setAttribute(QWebSettings.AutoLoadImages, True)
+        wp.setAttribute(QWebSettings.JavascriptEnabled, True)
         #self.page().mainFrame().setScrollBarPolicy(Qt.Vertical,
         #                                           Qt.ScrollBarAlwaysOff)
 
@@ -88,12 +86,12 @@ class OrangeBrowser(QtWebKit.QWebView):
         self.page().mainFrame().loadStarted.connect(self.load_started)
         self.page().mainFrame().loadFinished.connect(self.load_finished)
 
-        cherry_server = ThreadedServer()
-        cherry_server.foo_signal.connect(self.open_url)
-        cherry_server.shutdown_signal.connect(self.shutdown)
-        cherry_server.screenshot_signal.connect(self.screenshot)
-        cherry_server.start()
-        self.setUrl(QUrl(FACEBOOK_URL))
+        self.cherry_server = ThreadedServer()
+        self.cherry_server.foo_signal.connect(self.open_url)
+        self.cherry_server.shutdown_signal.connect(self.shutdown)
+        self.cherry_server.screenshot_signal.connect(self.screenshot)
+        self.cherry_server.start()
+        #self.setUrl(QUrl(FACEBOOK_URL))
 
     def load_started(self):
         print("started")
@@ -101,7 +99,7 @@ class OrangeBrowser(QtWebKit.QWebView):
         #QTimer.singleShot(10000, self.load_finished)
 
     def load_finished(self, ok=False):
-        print("finished")
+        print("finished, {}".format(ok))
         self.load_status = "finished"
 
     def open_url(self, url):
