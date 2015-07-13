@@ -3,5 +3,6 @@ orangecase:
     ports:
       - "9929:9919"
     volumes:
-        - /home/m/devel/orangecase/live:/tmp/live/
+        - /home/m/devel/orangecase/live/:/tmp/live/
+        - /home/m/devel/orangecase/orangecase/apk/:/var/cache/apk/
 

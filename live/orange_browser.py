@@ -1,4 +1,5 @@
-from PyQt5.Qt import (QApplication,
+from PyQt5.Qt import (Qt,
+                      QApplication,
                       QThread,
                       QUrl,
                       QImage,
@@ -79,8 +80,8 @@ class OrangeBrowser(QtWebKit.QWebView):
         wp = self.page().settings()
         wp.setAttribute(QWebSettings.AutoLoadImages, True)
         wp.setAttribute(QWebSettings.JavascriptEnabled, True)
-        #self.page().mainFrame().setScrollBarPolicy(Qt.Vertical,
-        #                                           Qt.ScrollBarAlwaysOff)
+        self.page().mainFrame().setScrollBarPolicy(Qt.Vertical,
+                                                   Qt.ScrollBarAlwaysOff)
 
         self.load_status = None
         self.page().mainFrame().loadStarted.connect(self.load_started)
